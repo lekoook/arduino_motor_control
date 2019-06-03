@@ -2,7 +2,23 @@
 #include <Arduino.h>
 
 /**
+ * This class allows creation of Encoder objects that measures SPEED and DISTANCE travelled.
+ * 
+ * updateCount() can be called  during RISING or FALLING or BOTH of an interrupt event. In this case, ticksPerRev
+ * parameter of constructor must be adjusted accordingly.
+ * 
+ * NOTE: Be wary of the rate of interrupt events. Based on personal experience, too high of interrupt rate can cause
+ * issues in Arduino Uno.
+ * 
+ * NOTE: Depending on the Arduino you are using (Uno, Due, Zero, etc.), int can be stored as 2-bytes or 4-bytes values.
+ * In certain cases, you may wish to replace long with int to save memory. Correspondingly, be wary with the fact that
+ * int are stored as 2-bytes on some boards (eg. Uno). You may then want to consider overflow cases.
+ */
+
+/**
  * @brief Construct a new Encoder:: Encoder object.
+ * @details Either one of the two pins (A and B) must be an interrupt pin such that updateCount() can be called during
+ * and interrupt service routine.
  * 
  * @param pinA The pin number to read first encoder output.
  * @param pinB The pin number to read second encoder output.
@@ -12,6 +28,8 @@
 Encoder::Encoder(int pinA, int pinB, long deltaTime, int ticksPerRev) : pinA(pinA), pinB(pinB), deltaTime(deltaTime)
 {
   degPerTick = 360.0 / ticksPerRev;
+  pinAReg = 1 << pinA;
+  pinBReg = 1 << pinB;
 }
 
 /**
@@ -21,27 +39,16 @@ Encoder::Encoder(int pinA, int pinB, long deltaTime, int ticksPerRev) : pinA(pin
  */
 void Encoder::updateCount(void)
 {
-  if (digitalRead(pinA) == HIGH)
+  valA = (PIND & pinAReg) > 0;
+  valB = (PIND & pinBReg) > 0;
+
+  if (valA == valB)
   {
-    if (digitalRead(pinB) == HIGH)
-    {
-      ticksCount++;
-    }
-    else
-    {
-      ticksCount--;
-    }
+    ticksCount++;
   }
   else
   {
-    if (digitalRead(pinB) == HIGH)
-    {
-      ticksCount--;
-    }
-    else
-    {
-      ticksCount++;
-    }
+    ticksCount--;
   }
 }
 
@@ -51,7 +58,7 @@ void Encoder::updateCount(void)
  * 
  * @return int The speed in degrees per second.
  */
-int Encoder::getSpeed(void)
+long Encoder::getSpeed(void)
 {
   oldTicksCount = newTicksCount;
   newTicksCount = ticksCount;
@@ -82,7 +89,8 @@ int Encoder::getSpeed(void)
 }
 
 /**
- * @brief Calculates and returns the distance traveled in degrees per second (degPerSec) since the last call of this function.
+ * @brief Calculates and returns the distance traveled in degrees per second (degPerSec) since the last call of this
+ * function.
  * @details This function must be called regularly such that totalTicksCount would not overflow.
  * 
  * @return int The distance in degrees per second.
@@ -94,4 +102,9 @@ int Encoder::getDistance(void)
   totalTicksCount = 0;
 
   return distance;
+}
+
+int Encoder::getCount(void)
+{
+  return ticksCount;
 }
