@@ -18,8 +18,6 @@ class Encoder
     long getSpeed(void);
     int getDistance(void);
 
-    int getCount(void); // TODO: remove
-
   private:
     int pinA; // Pin number for first output
     int pinB; // Pin number for second output

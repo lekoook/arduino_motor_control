@@ -103,8 +103,3 @@ int Encoder::getDistance(void)
 
   return distance;
 }
-
-int Encoder::getCount(void)
-{
-  return ticksCount;
-}
