@@ -35,6 +35,10 @@ Encoder::Encoder(int pinA, int pinB, long deltaTime, int ticksPerRev) : pinA(pin
 /**
  * @brief Updates ticksCount when an encoder interrupt event occurs.
  * @details This function must be called when there is a PIN CHANGE in the interrupt.
+ * NOTE: PIND corresponds to digital pins 0 - 7 on Arduino Uno. If you are using other pins or other devices, be sure
+ * to make appropriate adjustments.
+ * 
+ * TODO: Find better way to use PIN ports according to pins used. (PINB, PINC, PIND)
  * 
  */
 void Encoder::updateCount(void)
@@ -56,7 +60,7 @@ void Encoder::updateCount(void)
  * @brief Calculates and returns the speed of the motor output shaft in degrees per second (degPerSec).
  * @details This function should be called every deltaTime for correct speed.
  * 
- * @return int The speed in degrees per second.
+ * @return long The speed in degrees per second.
  */
 long Encoder::getSpeed(void)
 {

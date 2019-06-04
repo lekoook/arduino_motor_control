@@ -2,7 +2,7 @@
 
 #define DEF_PIN_A 2
 #define DEF_PIN_B 3
-#define DEF_DELTA_T 500000
+#define DEF_DELTA_T 50000
 #define DEF_TICKS_PER_REV 24
 
 class Encoder
