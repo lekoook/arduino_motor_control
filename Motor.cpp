@@ -1,5 +1,4 @@
 #include <Motor.h>
-#include <Arduino.h>
 
 /**
  * @brief Construct a new Motor:: Motor object.

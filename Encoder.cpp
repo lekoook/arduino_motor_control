@@ -1,5 +1,4 @@
 #include <Encoder.h>
-#include <Arduino.h>
 
 /**
  * This class allows creation of Encoder objects that measures SPEED and DISTANCE travelled.
